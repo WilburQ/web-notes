@@ -4,7 +4,7 @@
 例：`<component v-bind:is="currentTabComponent" v-for="(item, index) of tagName" :key="index"></component>`
 ## 2.虽然IE都被微软自己淘汰了，但是保不准还是会遇到兼容IE的需求，这不遇到了要兼容IE9的需求了。  
 * 文件上传
-一般上传都是使用`<input type="file">`，然后`new formData`  
+一般上传都是使用`<input type="file">`，然后`new formData`,我这个例子稍微复制了点，因为后端需要我在上传的时候要在formdata中带参数  
 ```javascript
 uploadLicense($event) {
   // 获取上传图片信息
@@ -32,4 +32,92 @@ uploadLicense($event) {
   }
   $event.target.value = ''
 },
+```
+但是呢，IE9不支持`formdata`，`e.target.files[0]`也拿不到文件的值（IE10及以上才可以支持），后来找到一个不错的办法，要使用layui的upload组件
+* 日历  
+`<input type="date">`IE9也不支持，所以可以使用layui的date组件  
+* vue中如何使用layui，虽然我不是很想这么做  
+（1）在脚手架的public文件夹下将下载好的layui文件夹拷贝过去  
+（2）在index.html中这样  
+```
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="icon" href="<%= BASE_URL %>logo.png">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="stylesheet" href="/layui/css/layui.css">
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+    <script src="/layui/layui.js"></script>
+  </body>
+</html>
+```
+（3）在组件中这样使用  
+要在mounted中调用，更多使用方法可以看官方api文档  
+layui官方文档[https://www.layui.com/doc/]
+```
+mounted() {
+    window.layui.use('laydate', () => {
+      const laydate = window.layui.laydate
+      laydate.render({
+        elem: '#test',
+        type: 'datetime',
+        done: value => {
+          this.createTime = value
+        }
+      })
+    })
+  }
+```
+```
+window.layui.use('upload', () => {
+  const upload = window.layui.upload
+  upload.render({
+    elem: '#uploadLicensePop',
+    headers: {
+      token: obj.token,
+      ukToken: obj.ukToken
+    },
+    data: {
+      fileModule: obj.fileModule,
+      fileBusinessName: 'BUSINESS_LICENSE',
+      businessNo: obj.businessNo,
+      fileName: `license${obj.time}`
+    },
+    url: obj.url,
+    done: function(res) {
+      if (res.code === 200) {
+        that.$toast({
+          text: '图片上传成功',
+          type: 'success'
+        })
+        that.text.licenseImgName = 'licenseok'
+        that.islicenseUrl = true
+      } else {
+        if (res.data) {
+          that.$toast({
+            text: res.data.message,
+            type: 'danger'
+          })
+        }
+      }
+      if (res.data) {
+        window.layui
+          .$('#uploadLicenseView')
+          .removeClass('layui-hide')
+          .find('img')
+          .attr('src', `${res.data.fileAbsoluteUrl}&ukToken=${obj.decodeukToken}`)
+      }
+      console.log(res)
+    }
+  })
+})
 ```
