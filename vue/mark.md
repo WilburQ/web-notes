@@ -59,10 +59,10 @@ uploadLicense($event) {
     <script src="/layui/layui.js"></script>
   </body>
 </html>
-```  
+```
 （3）在组件中这样使用  
 要在mounted中调用，更多使用方法可以看官方api文档，如果要修改成自己想要的样式，可以修改源文件，vue打包的时候会直接将public中文件打包成静态文件，或者你也可以将自己修改好的源文件打包上传到npm。  
-layui官方文档[https://www.layui.com/doc/]
+[layui]官方文档(https://www.layui.com/doc/)
 ```javascript
 mounted() {
     window.layui.use('laydate', () => {
@@ -77,7 +77,7 @@ mounted() {
     })
   }
 ```
-```
+```javascript
 window.layui.use('upload', () => {
   const upload = window.layui.upload
   upload.render({
