@@ -39,7 +39,7 @@ uploadLicense($event) {
 * vue中如何使用layui，虽然我不是很想这么做  
 （1）在脚手架的public文件夹下将下载好的layui文件夹拷贝过去  
 （2）在index.html中这样  
-```
+``` html
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -59,11 +59,11 @@ uploadLicense($event) {
     <script src="/layui/layui.js"></script>
   </body>
 </html>
-```
+```  
 （3）在组件中这样使用  
-要在mounted中调用，更多使用方法可以看官方api文档  
+要在mounted中调用，更多使用方法可以看官方api文档，如果要修改成自己想要的样式，可以修改源文件，vue打包的时候会直接将public中文件打包成静态文件，或者你也可以将自己修改好的源文件打包上传到npm。  
 layui官方文档[https://www.layui.com/doc/]
-```
+```javascript
 mounted() {
     window.layui.use('laydate', () => {
       const laydate = window.layui.laydate
